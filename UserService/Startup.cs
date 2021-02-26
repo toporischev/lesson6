@@ -14,18 +14,19 @@ namespace UserService
 {
     public class Startup
     {
-        private readonly IConfiguration _configuration;
-
-        public Startup(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-        
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddHealthChecks();
 
-            services.AddScoped(_ => new NpgsqlConnection(_configuration.GetValue<string>("connectionString")));
+            var connectionStringBuilder = new NpgsqlConnectionStringBuilder
+            {
+                Host = Environment.GetEnvironmentVariable("POSTGRES_URI"),
+                Database = Environment.GetEnvironmentVariable("POSTGRES_DB"),
+                Username = Environment.GetEnvironmentVariable("POSTGRES_USER"),
+                Password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD"),
+            };
+            services.AddScoped(_ => new NpgsqlConnection(connectionStringBuilder.ConnectionString));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -36,6 +37,8 @@ namespace UserService
             {
                 endpoints.MapControllers();
             });
+
+            app.UseHealthChecks("/health");
         }
     }
 }

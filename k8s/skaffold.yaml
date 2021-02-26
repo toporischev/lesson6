@@ -1,0 +1,14 @@
+apiVersion: skaffold/v2beta12
+kind: Config
+metadata:
+  name: skaffold
+build:
+  artifacts:
+    - image: toporischev/lesson6.user-service
+      context: ../UserService
+deploy:
+  kubectl:
+    manifests:
+      - user-deployment.yaml
+      - user-service.yaml
+      - user-ingress.yaml

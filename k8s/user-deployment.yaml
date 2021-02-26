@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+        - name: user
+          image: toporischev/lesson6.user-service:1.0.0
+          ports:
+            - containerPort: 80
+          env:
+            - name: POSTGRES_URI
+              value: postgres
+            - name: POSTGRES_DB
+              value: users
+            - name: POSTGRES_USER
+              value: myuser
+            - name: POSTGRES_PASSWORD
+              value: password
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /health
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              port: 80
+              path: /health
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            timeoutSeconds: 1
