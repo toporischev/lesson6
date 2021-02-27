@@ -14,3 +14,8 @@ kubectl apply -f sql-migrations
 ```Shell
 helm install user-app user-chart
 ```
+
+4. Команда запуска postman-коллекции
+```Shell
+newman run ../user-api.postman_collection.json
+```
