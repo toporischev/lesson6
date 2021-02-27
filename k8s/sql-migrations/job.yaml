@@ -5,6 +5,21 @@ metadata:
 spec:
   template:
     spec:
+      initContainers:
+        - name: loading-sql-scripts
+          image: k8s.gcr.io/git-sync/git-sync:v3.2.2
+          env:
+            - name: GIT_SYNC_REPO
+              value: https://github.com/toporischev/otus-sql
+            - name: GIT_SYNC_BRANCH
+              value: master
+            - name: GIT_SYNC_ROOT
+              value: /flyway/sql
+            - name: GIT_SYNC_ONE_TIME
+              value: "true"
+          volumeMounts:
+            - name: sql
+              mountPath: /flyway/sql
       containers:
         - name: sql-migrations
           image: flyway/flyway
@@ -24,12 +39,13 @@ spec:
                 secretKeyRef:
                   name: sql-migrations-secrets
                   key: POSTGRES_PASSWORD
+            - name: FLYWAY_LOCATIONS
+              value: filesystem:/flyway/sql/otus-sql/sql
           volumeMounts:
-            - mountPath: /flyway/sql
-              name: sql
+            - name: sql
+              mountPath: /flyway/sql
       volumes:
         - name: sql
-          configMap:
-            name: sql-configmap
+          emptyDir: {}
       restartPolicy: Never
   backoffLimit: 2
