@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sql-migrations
+spec:
+  template:
+    spec:
+      containers:
+        - name: sql-migrations
+          image: flyway/flyway
+          args:
+            - info
+            - migrate
+          env:
+            - name: FLYWAY_URL
+              value: jdbc:postgresql://postgres/otus
+            - name: FLYWAY_USER
+              valueFrom:
+                secretKeyRef:
+                  name: sql-migrations-secrets
+                  key: POSTGRES_USER
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sql-migrations-secrets
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - mountPath: /flyway/sql
+              name: sql
+      volumes:
+        - name: sql
+          configMap:
+            name: sql-configmap
+      restartPolicy: Never
+  backoffLimit: 2

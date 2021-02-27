@@ -24,22 +24,22 @@ spec:
             - name: POSTGRES_URI
               valueFrom: 
                 configMapKeyRef:
-                  name: app-config
+                  name: user-configmap
                   key: POSTGRES_URI
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
-                  name: app-config
+                  name: user-configmap
                   key: POSTGRES_DB
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: app-secret
+                  name: user-secrets
                   key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: app-secret
+                  name: user-secrets
                   key: POSTGRES_PASSWORD
           livenessProbe:
             httpGet:
