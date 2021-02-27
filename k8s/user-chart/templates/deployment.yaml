@@ -11,8 +11,6 @@ spec:
     metadata:
       labels:
         {{- include "user-chart.selectorLabels" . | nindent 8 }}
-      annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
     spec:
       containers:
         - name: {{ .Chart.Name }}

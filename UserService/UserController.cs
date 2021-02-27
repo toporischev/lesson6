@@ -42,25 +42,25 @@ namespace UserService
         public async Task<ActionResult<int>> Create(User user)
         {
             const string sql = @"
-                insert into Users (email, last_name, first_name)
+                insert into users (email, lastname, firstname)
                 values (@email, @lastName, @firstName) returning id";
             
             var userId = await _connection.QuerySingleAsync<int>(sql, user);
             return CreatedAtAction(nameof(Get), new {id = userId}, userId);
         }
 
-        [HttpPut("{userId}")]
-        public async Task<IActionResult> Update(int userId, User user)
+        [HttpPut]
+        public async Task<IActionResult> Update(User user)
         {
             const string sql = @"
-                update Users
+                update users
                 set
                     email = @email,
-                    lastName = @lastName,
-                    firstName = @firstName
-                where id = @userId";
+                    lastname = @lastName,
+                    firstname = @firstName
+                where id = @id";
             
-            var rowsAffected = await _connection.ExecuteAsync(sql, new { id = userId, user = user });
+            var rowsAffected = await _connection.ExecuteAsync(sql, user);
             if (rowsAffected == 0)
                 return NotFound();
 
@@ -70,7 +70,7 @@ namespace UserService
         [HttpDelete("{userId}")]
         public async Task<IActionResult> Delete(int userId)
         {
-            const string sql = @"delete from Users where id = @userId";
+            const string sql = @"delete from users where id = @userId";
             
             var rowsAffected = await _connection.ExecuteAsync(sql, new { userId });
             if (rowsAffected == 0)
