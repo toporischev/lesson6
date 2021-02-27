@@ -20,9 +20,9 @@ namespace UserService
         [HttpGet("{userId}")]
         public async Task<ActionResult<User>> Get(int userId)
         {
-            const string sql = @"select * from users where Id = userId";
+            const string sql = @"select * from users where Id = @userId";
 
-            var user = await _connection.QueryFirstOrDefaultAsync<User>(sql, userId);
+            var user = await _connection.QueryFirstOrDefaultAsync<User>(sql, new { userId });
             if (user is null)
                 return NotFound();
             
@@ -60,7 +60,7 @@ namespace UserService
                     firstName = @firstName
                 where id = @userId";
             
-            var rowsAffected = await _connection.ExecuteAsync(sql, new { id = userId, user = user});
+            var rowsAffected = await _connection.ExecuteAsync(sql, new { id = userId, user = user });
             if (rowsAffected == 0)
                 return NotFound();
 
@@ -72,7 +72,7 @@ namespace UserService
         {
             const string sql = @"delete from Users where id = @userId";
             
-            var rowsAffected = await _connection.ExecuteAsync(sql, userId);
+            var rowsAffected = await _connection.ExecuteAsync(sql, new { userId });
             if (rowsAffected == 0)
                 return NotFound();
 

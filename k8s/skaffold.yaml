@@ -7,8 +7,9 @@ build:
     - image: toporischev/lesson6.user-service
       context: ../UserService
 deploy:
-  kubectl:
-    manifests:
-      - user-deployment.yaml
-      - user-service.yaml
-      - user-ingress.yaml
+  helm:
+    releases:
+      - name: user-skaffold
+        chartPath: user-chart
+        artifactOverrides:
+          image: toporischev/lesson6.user-service

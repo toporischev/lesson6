@@ -1,0 +1,17 @@
+replicaCount: 1
+
+image: toporischev/lesson6.user-service:1.0.0
+
+service:
+  port: 8000
+
+ingress:
+  host: arch.homework
+
+postgres:
+  uri: "postgres"
+  port: 5432
+  user: myuser
+  password: password
+  db: otus
+  
